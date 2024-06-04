@@ -12,16 +12,16 @@ type Database interface {
 }
 
 type Cache interface {
-	Set(order *domain.Order) error
-	Get(orderUID string) (*domain.Order, error)
+	Set(ctx context.Context, order *domain.Order) error
+	Get(ctx context.Context, orderUID string) (*domain.Order, error)
 }
 
 type Repository struct {
-	db    *Database
-	cache *Cache
+	db    Database
+	cache Cache
 }
 
-func NewRepository(db *Database, cache *Cache) *Repository {
+func NewRepository(db Database, cache Cache) *Repository {
 	return &Repository{
 		db:    db,
 		cache: cache,
