@@ -9,7 +9,7 @@ import (
 
 type PgxIface interface {
 	Begin(context.Context) (pgx.Tx, error)
-	Close(context.Context) error
+	Close()
 	Exec(ctx context.Context, sql string, arguments ...any) (commandTag pgconn.CommandTag, err error)
 	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
@@ -97,9 +97,9 @@ func (p *Postgres) ReadOrder(ctx context.Context, orderUID string) (*domain.Orde
 	order := &domain.Order{}
 
 	row := p.db.QueryRow(ctx, `
-		SELECT order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard
-		FROM orders
-		WHERE order_uid = $1`, orderUID)
+        SELECT order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard
+        FROM orders
+        WHERE order_uid = $1`, orderUID)
 	if err := row.Scan(&order.OrderUID, &order.TrackNumber, &order.Entry, &order.Locale, &order.InternalSignature,
 		&order.CustomerID, &order.DeliveryService, &order.Shardkey, &order.SmID, &order.DateCreated, &order.OofShard); err != nil {
 		return nil, err

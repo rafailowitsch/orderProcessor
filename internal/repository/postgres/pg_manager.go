@@ -2,10 +2,10 @@ package postgres
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func CreateTables(ctx context.Context, conn *pgx.Conn) error {
+func CreateTables(ctx context.Context, conn *pgxpool.Pool) error {
 	var err error
 
 	_, err = conn.Exec(ctx, `

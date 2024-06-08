@@ -41,14 +41,14 @@ func (r *Redis) Get(ctx context.Context, orderUID string) (*domain.Order, error)
 
 	orderJSON, err := r.cache.Get(ctx, key).Result()
 	if err != nil {
-		log.Fatalf("Could not get JSON from Redis: %v", err)
+		log.Printf("Could not get JSON from Redis: %v\n", err)
 		return nil, err
 	}
 
 	order := &domain.Order{}
 	err = json.Unmarshal([]byte(orderJSON), order)
 	if err != nil {
-		log.Fatalf("Could not unmarshal JSON: %v", err)
+		log.Printf("Could not unmarshal JSON: %v\n", err)
 		return nil, err
 	}
 
