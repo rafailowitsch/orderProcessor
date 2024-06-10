@@ -1,3 +1,4 @@
+
 version: '3.8'
 
 services:
@@ -7,10 +8,14 @@ services:
     ports:
       - "4222:4222"  # NATS client
       - "8222:8222"  # HTTP monitoring
-      - "8223:8223"  # HTTPS monitoring
-    environment:
-      - CLUSTER_ID=test-cluster  # Set the cluster ID
-      - NATS_URL=nats://0.0.0.0:4222  # NATS URL
+    volumes:
+      - nats-data:/data
+      - ./stan-server.conf:/etc/stan/stan-server.conf  # Примонтирование конфигурационного файла
+    command: [
+      "-m", "8222",        # включение HTTP мониторинга на порту 8222
+      "-p", "4222",        # основной порт для NATS соединений
+      "-sc", "/etc/stan/stan-server.conf",
+    ]
 
   postgres:
     image: postgres:latest
@@ -37,3 +42,4 @@ services:
 volumes:
   postgres-data:
   redis-data:
+  nats-data:

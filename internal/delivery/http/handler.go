@@ -3,6 +3,7 @@ package httphandler
 import (
 	"context"
 	"encoding/json"
+	_ "github.com/swaggo/http-swagger" // http-swagger middleware
 	"net/http"
 	"orderProcessor/internal/domain"
 	"strings"
@@ -24,24 +25,16 @@ func NewHandler(repo Repository) *Handler {
 	}
 }
 
-//func (h *Handler) SaveOrder(w http.ResponseWriter, r *http.Request) {
-//	var order domain.Order
-//
-//	err := json.NewDecoder(r.Body).Decode(&order)
-//	if err != nil {
-//		http.Error(w, err.Error(), http.StatusBadRequest)
-//		return
-//	}
-//
-//	err = h.repo.Create(r.Context(), &order)
-//	if err != nil {
-//		http.Error(w, err.Error(), http.StatusInternalServerError)
-//		return
-//	}
-//
-//	w.WriteHeader(http.StatusCreated)
-//}
-
+// @Summary Get an order
+// @Description Get order by ID
+// @ID get-order-by-id
+// @Accept json
+// @Produce json
+// @Param id path string true "Order ID"
+// @Success 200 {object} domain.Order
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /order/{id} [get]
 func (h *Handler) GetOrder(w http.ResponseWriter, r *http.Request) {
 	orderUID := strings.TrimPrefix(r.URL.Path, "/order/")
 	if orderUID == "" {
@@ -58,6 +51,14 @@ func (h *Handler) GetOrder(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(order)
 }
 
+// @Summary Get all orders
+// @Description Get all orders
+// @ID get-all-orders
+// @Accept json
+// @Produce json
+// @Success 200 {array} domain.Order
+// @Failure 500 {object} map[string]string
+// @Router /order [get]
 func (h *Handler) GetAllOrders(w http.ResponseWriter, r *http.Request) {
 	orders, err := h.repo.ReadAll(r.Context())
 	if err != nil {

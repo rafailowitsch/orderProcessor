@@ -5,10 +5,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/stan.go"
 	"github.com/redis/go-redis/v9"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log/slog"
 	"net/http"
+	_ "orderProcessor/docs"
 	httphandler "orderProcessor/internal/delivery/http"
-	natsstr "orderProcessor/internal/delivery/nats"
+	natsstr "orderProcessor/internal/delivery/stan"
 	"orderProcessor/internal/repository"
 	"orderProcessor/internal/repository/postgres"
 	redi "orderProcessor/internal/repository/redis"
@@ -64,6 +66,8 @@ func Run() {
 
 	http.HandleFunc("/order/", handler.GetOrder)
 	http.HandleFunc("/order", handler.GetAllOrders)
+
+	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
 	go func() {
 		slog.Info("server started")
